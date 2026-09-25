@@ -6,21 +6,21 @@ export default function CuotasPage() {
   const [socios, setSocios] = useState([])
   const [cargando, setCargando] = useState(true)
 
-  // Estado para el formulario de nueva cuota
-  const [form, setForm] = useState({
+  const initialFormState = {
     id_socio: '',
     mes: '',
     vencimiento: '',
-    precio: 0
-  })
+    precio: ''
+  }
 
-  // Cargar cuotas y socios al montar el componente
+  const [form, setForm] = useState(initialFormState)
+
   const cargarDatos = () => {
     setCargando(true)
     Promise.all([getCuotas(), getSocios()])
       .then(([resCuotas, resSocios]) => {
-        setCuotas(resCuotas.data)
-        setSocios(resSocios.data)
+        setCuotas(resCuotas.data || [])
+        setSocios(resSocios.data || [])
         setCargando(false)
       })
       .catch(error => {
@@ -33,7 +33,6 @@ export default function CuotasPage() {
     cargarDatos()
   }, [])
 
-  // Manejar cambios en los inputs
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -41,13 +40,12 @@ export default function CuotasPage() {
     })
   }
 
-  // Guardar la nueva cuota
   const handleSubmit = (e) => {
     e.preventDefault()
 
     const cuotaAEnviar = {
-      id_socio: parseInt(form.id_socio),
-      mes: String(form.mes),
+      id_socio: parseInt(form.id_socio, 10),
+      mes: parseInt(form.mes, 10), // O String(form.mes) según corresponda con DTO de la API
       vencimiento: form.vencimiento,
       precio: parseFloat(form.precio)
     }
@@ -55,7 +53,7 @@ export default function CuotasPage() {
     createCuota(cuotaAEnviar)
       .then(() => {
         alert('¡Cuota generada con éxito!')
-        setForm({ id_socio: '', mes: '', vencimiento: '', precio: 0 })
+        setForm(initialFormState)
         cargarDatos()
       })
       .catch(error => {
@@ -68,7 +66,6 @@ export default function CuotasPage() {
     <div style={{ textAlign: 'left' }}>
       <h2>📋 Gestión de Cuotas</h2>
 
-      {/* Formulario para registrar/generar nueva cuota */}
       <div style={{ background: '#222', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
         <h3>Generar Nueva Cuota</h3>
         <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '10px', maxWidth: '400px' }}>
@@ -76,11 +73,14 @@ export default function CuotasPage() {
           <label>Socio:</label>
           <select name="id_socio" value={form.id_socio} onChange={handleChange} required>
             <option value="" disabled>Seleccione un Socio</option>
-            {socios.map(s => (
-              <option key={s.id_socio || s.idSocio || s.id} value={s.id_socio || s.idSocio || s.id}>
-                {s.nombre || s.Nombre} {s.apellido || s.Apellido}
-              </option>
-            ))}
+            {socios.map(s => {
+              const socioId = s.id_socio || s.idSocio || s.id
+              return (
+                <option key={socioId} value={socioId}>
+                  {s.nombre || s.Nombre} {s.apellido || s.Apellido}
+                </option>
+              )
+            })}
           </select>
 
           <label>Mes (1 al 12):</label>
@@ -121,7 +121,6 @@ export default function CuotasPage() {
         </form>
       </div>
 
-      {/* Tabla con la lista de cuotas registradas */}
       <h3>Listado de Cuotas</h3>
       {cargando ? (
         <p>Cargando cuotas...</p>
