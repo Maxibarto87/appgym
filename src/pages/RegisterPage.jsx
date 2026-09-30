@@ -21,7 +21,6 @@ export default function RegisterPage({ onRegistroExitoso, onIrALogin, onClose })
     setMensaje('')
 
     try {
-      // Petición al endpoint POST /usuarios para registrar el nuevo usuario
       await API.post('/usuarios', {
         Nombre: formData.Nombre,
         Clave: formData.Clave
@@ -41,14 +40,12 @@ export default function RegisterPage({ onRegistroExitoso, onIrALogin, onClose })
 
   return (
     <div style={styles.card}>
-      {/* Botón de cerrar */}
       {onClose && (
         <button style={styles.closeBtn} onClick={onClose}>
           ✕
         </button>
       )}
 
-      {/* Tabs / Navegación */}
       <div style={styles.tabsContainer}>
         <button 
           type="button" 
@@ -65,10 +62,8 @@ export default function RegisterPage({ onRegistroExitoso, onIrALogin, onClose })
         </button>
       </div>
 
-      {/* Mensaje de Error / Éxito */}
       {mensaje && <p style={styles.errorText}>{mensaje}</p>}
 
-      {/* Formulario */}
       <form onSubmit={handleSubmit} style={styles.form}>
         <div style={styles.inputGroup}>
           <input
@@ -186,7 +181,7 @@ const styles = {
   submitBtn: {
     marginTop: '10px',
     padding: '14px',
-    backgroundColor: '#ff8a65',
+    backgroundColor: '#4b97d9',
     color: 'white',
     border: 'none',
     borderRadius: '25px',

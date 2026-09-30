@@ -21,7 +21,6 @@ export default function LoginPage({ onLoginExitoso, onIrARegistro, onClose }) {
     setMensaje('')
 
     try {
-      // Petición enviando Nombre y Clave según la tabla Usuarios
       const response = await API.post('/usuarios/login', {
         Nombre: formData.Nombre,
         Clave: formData.Clave
@@ -41,14 +40,12 @@ export default function LoginPage({ onLoginExitoso, onIrARegistro, onClose }) {
 
   return (
     <div style={styles.card}>
-      {/* Botón de cerrar (X) */}
       {onClose && (
         <button style={styles.closeBtn} onClick={onClose}>
           ✕
         </button>
       )}
 
-      {/* Tabs / Navegación Superior */}
       <div style={styles.tabsContainer}>
         <button 
           type="button" 
@@ -65,10 +62,8 @@ export default function LoginPage({ onLoginExitoso, onIrARegistro, onClose }) {
         </button>
       </div>
 
-      {/* Mensaje de Error */}
       {mensaje && <p style={styles.errorText}>{mensaje}</p>}
 
-      {/* Formulario adaptado a Usuarios (Nombre y Clave) */}
       <form onSubmit={handleSubmit} style={styles.form}>
         <div style={styles.inputGroup}>
           <input
@@ -101,7 +96,6 @@ export default function LoginPage({ onLoginExitoso, onIrARegistro, onClose }) {
           </button>
         </div>
 
-        {/* Botón de envío */}
         <button type="submit" style={styles.submitBtn}>
           Iniciar sesión
         </button>
@@ -110,7 +104,6 @@ export default function LoginPage({ onLoginExitoso, onIrARegistro, onClose }) {
   )
 }
 
-// Estilos visuales
 const styles = {
   card: {
     maxWidth: '380px',
@@ -188,7 +181,7 @@ const styles = {
   submitBtn: {
     marginTop: '10px',
     padding: '14px',
-    backgroundColor: '#ff8a65',
+    backgroundColor: '#4b97d9',
     color: 'white',
     border: 'none',
     borderRadius: '25px',
