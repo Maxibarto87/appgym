@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import API from '../services/api'
 
-export default function RegisterPage({ onRegistroExitoso, onIrALogin, onClose }) {
+export default function LoginPage({ onLoginExitoso, onIrARegistro, onClose }) {
   const [formData, setFormData] = useState({
     Nombre: '',
     Clave: ''
@@ -21,54 +21,54 @@ export default function RegisterPage({ onRegistroExitoso, onIrALogin, onClose })
     setMensaje('')
 
     try {
-      // Petición al endpoint POST /usuarios para registrar el nuevo usuario
-      await API.post('/usuarios', {
+      // Petición enviando Nombre y Clave según la tabla Usuarios
+      const response = await API.post('/usuarios/login', {
         Nombre: formData.Nombre,
         Clave: formData.Clave
       })
 
-      if (onRegistroExitoso) {
-        onRegistroExitoso()
+      if (onLoginExitoso) {
+        onLoginExitoso(response.data)
       }
     } catch (error) {
-      console.error('Error al registrar usuario:', error.response?.data)
+      console.error('Error al iniciar sesión:', error.response?.data)
       setMensaje(
         error.response?.data?.mensaje ||
-        'Error al registrar datos o conectar con el servidor.'
+        'Usuario o contraseña incorrectos.'
       )
     }
   }
 
   return (
     <div style={styles.card}>
-      {/* Botón de cerrar */}
+      {/* Botón de cerrar (X) */}
       {onClose && (
         <button style={styles.closeBtn} onClick={onClose}>
           ✕
         </button>
       )}
 
-      {/* Tabs / Navegación */}
+      {/* Tabs / Navegación Superior */}
       <div style={styles.tabsContainer}>
         <button 
           type="button" 
-          style={{ ...styles.tab, color: '#000', fontWeight: 'bold', borderBottom: '3px solid #ff5a36' }}
+          onClick={onIrARegistro} 
+          style={{ ...styles.tab, color: '#777', fontWeight: 'normal' }}
         >
           Regístrate
         </button>
         <button 
           type="button" 
-          onClick={onIrALogin} 
-          style={{ ...styles.tab, color: '#777', fontWeight: 'normal' }}
+          style={{ ...styles.tab, color: '#000', fontWeight: 'bold', borderBottom: '3px solid #ff5a36' }}
         >
           Inicia sesión
         </button>
       </div>
 
-      {/* Mensaje de Error / Éxito */}
+      {/* Mensaje de Error */}
       {mensaje && <p style={styles.errorText}>{mensaje}</p>}
 
-      {/* Formulario */}
+      {/* Formulario adaptado a Usuarios (Nombre y Clave) */}
       <form onSubmit={handleSubmit} style={styles.form}>
         <div style={styles.inputGroup}>
           <input
@@ -101,14 +101,16 @@ export default function RegisterPage({ onRegistroExitoso, onIrALogin, onClose })
           </button>
         </div>
 
+        {/* Botón de envío */}
         <button type="submit" style={styles.submitBtn}>
-          Registrarse
+          Iniciar sesión
         </button>
       </form>
     </div>
   )
 }
 
+// Estilos visuales
 const styles = {
   card: {
     maxWidth: '380px',

@@ -5,13 +5,19 @@ import PlanesPage from './pages/PlanesPage'
 import CuotasPage from './pages/CuotasPage'
 import PagosPage from './pages/PagosPage'
 import RegisterPage from './pages/RegisterPage'
+import LoginPage from './pages/LoginPage'
 
 export default function App() {
-  // 1. Leemos el localStorage al iniciar
+  // 1. Leemos si hay sesión activa en localStorage
   const [estaAutenticado, setEstaAutenticado] = useState(() => {
     return localStorage.getItem('token') ? true : false
   })
+
+  // Controla la sección actual si ya inició sesión ('socios', 'planes', etc.)
   const [vistaActual, setVistaActual] = useState('socios')
+
+  // Estado para alternar entre 'login' y 'registro' cuando no está autenticado
+  const [vistaAuth, setVistaAuth] = useState('login')
 
   // 2. Función para cerrar sesión correctamente
   const handleCerrarSesion = () => {
@@ -19,47 +25,42 @@ export default function App() {
     setEstaAutenticado(false)
   }
 
+  // 3. Si no está autenticado, muestra el Login o Registro según 'vistaAuth'
   if (!estaAutenticado) {
     return (
       <div style={{ padding: '20px' }}>
         <h1 style={{ textAlign: 'center' }}>🏋️ AppGym - Acceso al Sistema</h1>
-        <RegisterPage onRegistroExitoso={() => setEstaAutenticado(true)} />
+        
+        {vistaAuth === 'login' ? (
+          <LoginPage 
+            onLoginExitoso={(datos) => {
+              if (datos?.token) {
+                localStorage.setItem('token', datos.token)
+              }
+              setEstaAutenticado(true)
+            }} 
+            onIrARegistro={() => setVistaAuth('registro')} 
+          />
+        ) : (
+          <RegisterPage 
+            onRegistroExitoso={() => setVistaAuth('login')} 
+            onIrALogin={() => setVistaAuth('login')} 
+          />
+        )}
       </div>
     )
   }
 
+  // 4. Si ya inició sesión, muestra el sistema completo
   return (
-    <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '20px' }}>
-      <header style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', // Corregido: justifyContent
-        alignItems: 'center', 
-        marginBottom: '20px',
-        gap: '20px'
-      }}>
-        <h1 style={{ margin: 0, fontSize: '1.8rem', whiteSpace: 'nowrap' }}>
-          🏋️ AppGym - Panel de Control
-        </h1>
-        <button 
-          onClick={handleCerrarSesion} // Usamos la función que remueve el localStorage
-          style={{ 
-            backgroundColor: '#dc3545', 
-            color: 'white', 
-            border: 'none', 
-            padding: '8px 16px', 
-            borderRadius: '4px', 
-            cursor: 'pointer',
-            fontWeight: 'bold',
-            flexShrink: 0
-          }}
-        >
-          Cerrar Sesión
-        </button>
-      </header>
-
-      <Navbar setVistaActual={setVistaActual} />
-
-      <main style={{ marginTop: '20px' }}>
+    <div>
+      <Navbar 
+        vistaActual={vistaActual} 
+        setVistaActual={setVistaActual} 
+        onCerrarSesion={handleCerrarSesion} 
+      />
+      
+      <main style={{ padding: '20px' }}>
         {vistaActual === 'socios' && <SociosPage />}
         {vistaActual === 'planes' && <PlanesPage />}
         {vistaActual === 'cuotas' && <CuotasPage />}
