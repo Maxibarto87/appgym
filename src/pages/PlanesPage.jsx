@@ -96,9 +96,7 @@ export default function PlanesPage() {
                 <span className="price-period">/mes</span>
               </div>
 
-              <button className={`btn-action ${esDestacado ? 'btn-yellow' : 'btn-red'}`}>
-                ASOCIATE
-              </button>
+            
             </div>
           )
         })}
