@@ -146,16 +146,7 @@ export default function PagosPage() {
         </select>
 
         {/* Método de Pago (Desplegable con ID numérico) */}
-        <select 
-          value={pago.idMetodo} 
-          onChange={e => setPago({ ...pago, idMetodo: e.target.value })} 
-          required 
-          style={{ padding: '8px', minWidth: '180px' }}
-        >
-          <option value="1">Efectivo</option>
-          <option value="2">Transferencia</option>
-          <option value="3">Débito / Crédito</option>
-        </select>
+        
 
         {/* Importe */}
         <input 
