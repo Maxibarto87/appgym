@@ -6,7 +6,6 @@ export default function PlanesPage() {
   const [planes, setPlanes] = useState([])
   const [form, setForm] = useState({ 
     nombre: '', 
-    tipo: 'Musculación', 
     precio: '' 
   })
 
@@ -20,13 +19,16 @@ export default function PlanesPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    const payload = { ...form, precio: Number(form.precio) }
+    const payload = { 
+      nombre: form.nombre, 
+      precio: Number(form.precio) 
+    }
 
     createPlan(payload).then(() => {
       alert('Plan guardado exitosamente')
-      setForm({ nombre: '', tipo: 'Musculación', precio: '' })
+      setForm({ nombre: '', precio: '' })
       cargarPlanes()
-    })
+    }).catch(err => console.error("Error al crear plan:", err))
   }
 
   const handleEliminar = (id) => {
@@ -50,16 +52,6 @@ export default function PlanesPage() {
             onChange={e => setForm({...form, nombre: e.target.value})} 
             required 
           />
-          <select 
-            value={form.tipo} 
-            onChange={e => setForm({...form, tipo: e.target.value})}
-            required
-          >
-            <option value="Musculación">Musculación / Gimnasio</option>
-            <option value="Zumba">Zumba / Baile</option>
-            <option value="Crossfit">Crossfit / Funcional</option>
-            <option value="Pase Libre">Pase Libre Full</option>
-          </select>
           <input 
             type="number" 
             placeholder="Precio" 
@@ -73,21 +65,18 @@ export default function PlanesPage() {
 
       {/* Grilla de Tarjetas horizontales */}
       <div className="cards-wrapper">
-        {planes.map((p, index) => {
+        {planes.map((p) => {
           const idPlan = p.id_plan || p.id
-          const esDestacado = p.destacado || index === 1
 
           return (
-            <div key={idPlan} className={`custom-card ${esDestacado ? 'highlighted-card' : ''}`}>
+            <div key={idPlan} className="custom-card">
               <button className="card-delete-btn" onClick={() => handleEliminar(idPlan)} title="Eliminar plan">
                 ✕
               </button>
 
-              {esDestacado && <div className="yellow-badge">Popular</div>}
-
               <div className="card-header">
                 <span className="card-period">MENSUAL</span>
-                <h2 className="card-title">{p.nombre.toUpperCase()}</h2>
+                <h2 className="card-title">{p.nombre?.toUpperCase()}</h2>
               </div>
 
               <div className="card-price-box">
@@ -95,8 +84,6 @@ export default function PlanesPage() {
                 <span className="price-amount">{Number(p.precio).toLocaleString('es-AR')}</span>
                 <span className="price-period">/mes</span>
               </div>
-
-            
             </div>
           )
         })}
