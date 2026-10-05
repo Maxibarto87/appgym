@@ -145,8 +145,17 @@ export default function PagosPage() {
           })}
         </select>
 
-        {/* Método de Pago (Desplegable con ID numérico) */}
-        
+        {/* Método de Pago (Efectivo, Tarjeta, QR) */}
+        <select 
+          value={pago.idMetodo} 
+          onChange={e => setPago({ ...pago, idMetodo: e.target.value })} 
+          required 
+          style={{ padding: '8px' }}
+        >
+          <option value="1">Efectivo</option>
+          <option value="2">Tarjeta</option>
+          <option value="3">QR</option>
+        </select>
 
         {/* Importe */}
         <input 
@@ -239,13 +248,14 @@ export default function PagosPage() {
             ) : (
               todosLosPagos.map((p, idx) => {
                 const socioObj = socios.find(s => (s.idSocio || s.id_socio || s.id || s.IdSocio) === (p.idSocio || p.id_socio || p.IdSocio))
+                const idMetodoNum = parseInt(p.id_Metodo || p.idMetodo || p.IdMetodo, 10)
 
                 return (
                   <tr key={p.idPago || p.id_pago || p.IdPago || idx}>
                     <td>{p.idPago || p.id_pago || p.IdPago || idx + 1}</td>
                     <td>{socioObj ? `${socioObj.nombre || socioObj.Nombre} ${socioObj.apellido || socioObj.Apellido}` : `Socio #${p.idSocio || p.id_socio || p.IdSocio}`}</td>
                     <td>Cuota #{p.idCuota || p.id_Cuota || p.IdCuota}</td>
-                    <td>{p.metodo || p.formaPago || p.Metodo || p.FormaPago || (p.id_Metodo === 1 ? 'Efectivo' : p.id_Metodo === 2 ? 'Transferencia' : 'Tarjeta')}</td>
+                    <td>{p.metodo || p.formaPago || p.Metodo || p.FormaPago || (idMetodoNum === 1 ? 'Efectivo' : idMetodoNum === 2 ? 'Tarjeta' : idMetodoNum === 3 ? 'QR' : 'Efectivo')}</td>
                     <td style={{ color: '#51cf66', fontWeight: 'bold' }}>${p.importe || p.Importe}</td>
                     <td>{p.fecha || p.Fecha ? new Date(p.fecha || p.Fecha).toLocaleDateString() : 'Reciente'}</td>
                   </tr>
